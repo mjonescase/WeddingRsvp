@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  WeddingRsvp
+
+  Sample SAM Template for WeddingRsvp
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  TheApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Domain:
+        CertificateArn: arn:aws:acm:us-east-1:612319403245:certificate/e8032c3c-7297-4d29-8bc1-6a21375e78b3
+        DomainName: rsvp.adriandmikejones.com
+        EndpointConfiguration: EDGE
+        Route53:
+          HostedZoneId: ZLIPFOH6RHKHT
+  RsvpAuthRedirect:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: src/
+      Handler: entrypoint.lambda_handler
+      Runtime: python3.7
+      Environment:
+        Variables:
+          PASSCODE_ARN: arn:aws:secretsmanager:us-west-2:612319403245:secret:RsvpPassword-mpxIUf
+          JWT_SECRET_ARN: arn:aws:secretsmanager:us-west-2:612319403245:secret:RsvpJwtSecret-UwzzIv
+      Events:
+        LoadLoginPage:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId:
+              Ref: TheApi            
+            Path: /
+            Method: get
+        SubmitLoginForm:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: TheApi
+            Path: /
+            Method: post
+      Policies:
+        - Statement:
+          - Sid: SecretsManagerReadHashedSecret
+            Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource:
+              - arn:aws:secretsmanager:us-west-2:612319403245:secret:RsvpPassword-mpxIUf
+              - arn:aws:secretsmanager:us-west-2:612319403245:secret:RsvpJwtSecret-UwzzIv
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function. I am explicitly defining TheApi instead.
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  RsvpApi:
+    Description: "API Gateway endpoint URL for Prod stage for Rsvp"
+    Value: !Sub "https://${TheApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  RsvpAuthRedirect:
+    Description: "RSVP Auth Lambda Function ARN"
+    Value: !GetAtt RsvpAuthRedirect.Arn
+  RsvpAuthFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt RsvpAuthRedirectRole.Arn
