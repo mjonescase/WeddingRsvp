@@ -21,7 +21,7 @@ Resources:
         EndpointConfiguration: EDGE
         Route53:
           HostedZoneId: ZLIPFOH6RHKHT
-  RsvpAuthRedirect:
+  Login:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: src/
@@ -31,6 +31,8 @@ Resources:
         Variables:
           PASSCODE_ARN: arn:aws:secretsmanager:us-west-2:612319403245:secret:RsvpPassword-mpxIUf
           JWT_SECRET_ARN: arn:aws:secretsmanager:us-west-2:612319403245:secret:RsvpJwtSecret-UwzzIv
+          SURVEY_URI: https://docs.google.com/forms/d/e/1FAIpQLSdBwK3Zc9KtIjpX8J5EvTcYj-PAWrQR2K7m3qwTdYZL7q0GIg/viewform?usp=sf_link
+          CONTROLLER: login
       Events:
         LoadLoginPage:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -62,9 +64,9 @@ Outputs:
   RsvpApi:
     Description: "API Gateway endpoint URL for Prod stage for Rsvp"
     Value: !Sub "https://${TheApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
-  RsvpAuthRedirect:
+  Login:
     Description: "RSVP Auth Lambda Function ARN"
-    Value: !GetAtt RsvpAuthRedirect.Arn
+    Value: !GetAtt Login.Arn
   RsvpAuthFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt RsvpAuthRedirectRole.Arn
+    Value: !GetAtt LoginRole.Arn
