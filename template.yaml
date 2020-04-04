@@ -33,6 +33,7 @@ Resources:
           JWT_SECRET_ARN: arn:aws:secretsmanager:us-west-2:612319403245:secret:RsvpJwtSecret-UwzzIv
           SURVEY_URI: https://docs.google.com/forms/d/e/1FAIpQLSdBwK3Zc9KtIjpX8J5EvTcYj-PAWrQR2K7m3qwTdYZL7q0GIg/viewform?usp=sf_link
           CONTROLLER: login
+          LOG_LEVEL: INFO
       Events:
         LoadLoginPage:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api

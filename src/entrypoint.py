@@ -1,5 +1,5 @@
-import logging
 import json
+import logging
 import os
 from typing import Dict, List
 from urllib.parse import parse_qs
@@ -9,12 +9,11 @@ from auth.JwtGenerator import JwtGenerator
 from controllers.LoginController import LoginController
 from secret_dao import get_secret
 
-
-log = logging.getLogger("wedding rsvp entrypoint")
-log.setLevel(logging.INFO)
+log = logging.getLogger(__name__)
+log.setLevel(getattr(logging, os.environ.get("LOG_LEVEL", "info").upper()))
 
 # read environment variables, set constants
-HASHED_PASSCODE: str = hash_passcode("LOTS_OF_PASSCODE")
+HASHED_PASSCODE: str = hash_passcode("LOTS_OF_PASSCODE".lower())
 JWT_SECRET: str = hash_passcode("LOTS_OF_SECRET")
 AWS_SAM_LOCAL: str = os.environ.get("AWS_SAM_LOCAL")
 log.info(f"AWS_SAM_LOCAL: {AWS_SAM_LOCAL}")
@@ -26,6 +25,7 @@ else:
     log.info("Running locally for development or testing")
 
 CONTROLLER: str = os.environ["CONTROLLER"]
+log.info(f"controller setting: {CONTROLLER}")
 
 # initialize controllers
 login_controller: LoginController = LoginController(
@@ -39,7 +39,6 @@ controller: "Controller" = globals()[f"{CONTROLLER}_controller"]
 
 def lambda_handler(event, _):
     log.info("WeddingRsvp common lambda entrypoint reached")
-    log.info(event)
     return {
         "get": _handle_get,
         "post": _handle_post,

@@ -1,5 +1,11 @@
+import logging
+import os
+
 from .Controller import Controller
 from views.LoginView import LoginView
+
+log = logging.getLogger(__name__)
+log.setLevel(getattr(logging, os.environ.get("LOG_LEVEL", "info").upper()))
 
 class LoginController(Controller):
     _view = LoginView
@@ -21,7 +27,12 @@ class LoginController(Controller):
         return self.__class__.respond_with_html(LoginView.get_html())
 
     def post(self, form: dict) -> dict:
-        if self._passcode_validator.is_valid_passcode(form["passcode"][0]):
+        passcode: str = form["passcode"][0]
+        log.info("Passcode exists in form. Checking...")
+        log.debug(f"Passcode is {passcode}")
+        if self._passcode_validator.is_valid_passcode(passcode):
+            log.info("Valid passcode. Redirecting to survey")
             return self.__class__.redirect(self._survey_uri)
 
+        log.warn("Invalid passcode. Responding with login screen with error message")
         return self.__class__.respond_with_html(LoginView.get_html(False))
