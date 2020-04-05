@@ -9,13 +9,21 @@ class Controller:
         raise NotImplemented()
         
     @classmethod
-    def respond_with_html(cls, body: str, status_code: int=200) -> dict:
+    def respond_with_html(
+            cls,
+            body: str,
+            status_code: int=200,
+            authorization_header: str=None) -> dict:
+        headers: dict = {
+            'Content-Type': 'text/html',    
+        }
+        if authorization_header is not None:
+            headers['Authorization'] = authorization_header
+        
         return {
             'statusCode': status_code,
             'body': body,
-            'headers': {
-                'Content-Type': 'text/html'
-            }
+            'headers': headers
         }
 
     @classmethod

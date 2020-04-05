@@ -25,10 +25,11 @@ class SurveyController(Controller):
         token: str = query_string["token"]
         if self._jwt_validator.is_valid_jwt(token):
             log.info("SSO succeeded. Generating session token")
-            # generate a session token jwt
-            # add session token jwt in Authorization header
-            log.info("Responding with survey HTML")
-            return self.__class__.respond_with_html(SurveyView.get_html())
+            log.info("Responding with session JWT and survey HTML")
+            return self.__class__.respond_with_html(
+                SurveyView.get_html(),
+                authorization_header=self._jwt_generator.build_jwt()
+            )
         else:
             log.warn("Invalid SSO token. Redirecting to login")
             return self.__class__.redirect(self._LOGIN_URI)
