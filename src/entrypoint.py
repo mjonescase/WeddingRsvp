@@ -48,6 +48,7 @@ controller: "Controller" = globals()[f"{CONTROLLER}_controller"]
 
 def lambda_handler(event, _):
     log.info("WeddingRsvp common lambda entrypoint reached")
+    log.debug(f"Event: {event}")
     return {
         "get": _handle_get,
         "post": _handle_post,
@@ -55,10 +56,10 @@ def lambda_handler(event, _):
 
 
 def _handle_get(event):
+    query_string: Dict[str, str] = event["queryStringParameters"]
     log.info("Handling GET request")
-    #TODO parse QS
-    #TODO use environment variables to choose controller
-    return controller.get({})
+    log.info(f"Query string: {query_string}")
+    return controller.get(query_string)
 
 
 def _handle_post(event):

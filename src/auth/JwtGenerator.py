@@ -23,7 +23,7 @@ class JwtGenerator:
     
     def __init__(
         self,
-        jwt_secret: str,
+        jwt_secret: bytes,
         duration_amount: int,
         duration_units: str
     ):

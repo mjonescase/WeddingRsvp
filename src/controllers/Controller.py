@@ -1,4 +1,13 @@
+from typing import Dict, List
+
+
 class Controller:
+    def get(self, query_string: Dict[str, str]) -> dict:
+        raise NotImplemented()
+
+    def post(self, form: Dict[str, List[str]]) -> dict:
+        raise NotImplemented()
+        
     @classmethod
     def respond_with_html(cls, body: str, status_code: int=200) -> dict:
         return {
