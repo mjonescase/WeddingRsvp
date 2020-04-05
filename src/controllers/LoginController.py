@@ -32,7 +32,10 @@ class LoginController(Controller):
         log.debug(f"Passcode is {passcode}")
         if self._passcode_validator.is_valid_passcode(passcode):
             log.info("Valid passcode. Redirecting to survey")
-            return self.__class__.redirect(self._survey_uri)
+            sso_token: str = self._jwt_generator.build_jwt()
+            return self.__class__.redirect(
+                f"{self._survey_uri}?token={sso_token}"
+            )
 
         log.warn("Invalid passcode. Responding with login screen with error message")
         return self.__class__.respond_with_html(LoginView.get_html(False))
