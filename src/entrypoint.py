@@ -16,15 +16,15 @@ log.setLevel(getattr(logging, os.environ.get("LOG_LEVEL", "info").upper()))
 
 # read environment variables, set constants
 HASHED_PASSCODE: str = hash_passcode("LOTS_OF_PASSCODE".lower())
-JWT_SECRET: str = hash_passcode("LOTS_OF_SECRET")
-SESSION_SECRET: str = hash_passcode("LOTS_OF_SESSION")
+JWT_SECRET: bytes = hash_passcode("LOTS_OF_SECRET").encode("utf-8")
+SESSION_SECRET: bytes = hash_passcode("LOTS_OF_SESSION").encode("utf-8")
 AWS_SAM_LOCAL: str = os.environ.get("AWS_SAM_LOCAL")
 log.info(f"AWS_SAM_LOCAL: {AWS_SAM_LOCAL}")
 if not AWS_SAM_LOCAL or AWS_SAM_LOCAL.lower() == "false":
     log.info("Not local. Getting real secrets from secretsmanager")
     HASHED_PASSCODE = get_secret(os.environ["PASSCODE_ARN"])["RsvpPassword"]
-    JWT_SECRET = get_secret(os.environ["JWT_SECRET_ARN"])["RsvpJwtSecret"]
-    SESSION_SECRET = get_secret(os.environ["SESSION_TOKEN_SECRET_ARN"]["RsvpJwtSecret"])
+    JWT_SECRET = get_secret(os.environ["JWT_SECRET_ARN"])["RsvpJwtSecret"].encode("utf-8")
+    SESSION_SECRET = get_secret(os.environ["SESSION_TOKEN_SECRET_ARN"]["RsvpJwtSecret"]).encode("utf-8")
 else:
     log.info("Running locally for development or testing")
 

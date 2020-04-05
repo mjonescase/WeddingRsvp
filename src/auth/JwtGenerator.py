@@ -8,6 +8,7 @@ from jwt import (
     jwk_from_dict,
     jwk_from_pem,
 )
+from jwt.jwk import OctetJWK
 from jwt.utils import get_int_from_datetime
 
 log = logging.getLogger(__name__)
@@ -16,7 +17,7 @@ log.setLevel(getattr(logging, os.environ.get("LOG_LEVEL", "info").upper()))
 
 class JwtGenerator:
     _ALG: str = "HS256" #symmetric/shared secret
-    _jwt_secret: str
+    _jwt_secret: OctetJWK
     _duration_amount: int
     _duration_units: str #hours, minutes or seconds
     
@@ -26,7 +27,7 @@ class JwtGenerator:
         duration_amount: int,
         duration_units: str
     ):
-        self._jwt_secret = jwt_secret
+        self._jwt_secret = OctetJWK(jwt_secret)
         self._duration_amount = duration_amount
         if duration_units not in { "hours", "minutes", "seconds" }:
             error_message: str = f"Invalid time unit string: {duration_units}"
