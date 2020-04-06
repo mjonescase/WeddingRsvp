@@ -24,7 +24,7 @@ if not AWS_SAM_LOCAL or AWS_SAM_LOCAL.lower() == "false":
     log.info("Not local. Getting real secrets from secretsmanager")
     HASHED_PASSCODE = get_secret(os.environ["PASSCODE_ARN"])["RsvpPassword"]
     JWT_SECRET = get_secret(os.environ["JWT_SECRET_ARN"])["RsvpJwtSecret"].encode("utf-8")
-    SESSION_SECRET = get_secret(os.environ["SESSION_TOKEN_SECRET_ARN"]["RsvpJwtSecret"]).encode("utf-8")
+    SESSION_SECRET = get_secret(os.environ["SESSION_TOKEN_SECRET_ARN"])["RsvpJwtSecret"].encode("utf-8")
 else:
     log.info("Running locally for development or testing")
 
@@ -40,6 +40,7 @@ login_controller: LoginController = LoginController(
 
 survey_controller: SurveyController = SurveyController(
     JwtValidator(JWT_SECRET),
+    JwtValidator(SESSION_SECRET),
     JwtGenerator(SESSION_SECRET, 15, "minutes")
 )
 
@@ -59,9 +60,11 @@ def _handle_get(event):
     query_string: Dict[str, str] = event["queryStringParameters"]
     log.info("Handling GET request")
     log.info(f"Query string: {query_string}")
-    return controller.get(query_string)
+    return controller.get(query_string or {})
 
 
 def _handle_post(event):
     log.info("Handling POST request")
-    return controller.post(parse_qs(event['body']))
+    multi_value_headers: dict = event["multiValueHeaders"]
+    log.debug(f"MultiValueHeaders: {multi_value_headers}")
+    return controller.post(parse_qs(event['body']), multi_value_headers)

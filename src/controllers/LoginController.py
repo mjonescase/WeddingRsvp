@@ -23,10 +23,10 @@ class LoginController(Controller):
         self._jwt_generator = jwt_generator
         self._survey_uri = survey_uri
 
-    def get(self, query_string: dict) -> dict:
+    def get(self, _) -> dict:
         return self.__class__.respond_with_html(LoginView.get_html())
 
-    def post(self, form: dict) -> dict:
+    def post(self, form: dict, _) -> dict:
         passcode: str = form["passcode"][0]
         log.info("Passcode exists in form. Checking...")
         log.debug(f"Passcode is {passcode}")

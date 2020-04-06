@@ -30,6 +30,12 @@ Resources:
         EndpointConfiguration: EDGE
         Route53:
           HostedZoneId: ZLIPFOH6RHKHT
+      Cors:
+        AllowMethods: "'POST, GET'"
+        AllowHeaders: "'X-Forwarded-For'"
+        AllowOrigin: "'rsvp.adriandmikejones.com'"
+        MaxAge: "'600'"
+        AllowCredentials: True               
   Login:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -60,6 +66,7 @@ Resources:
             Resource:
               - arn:aws:secretsmanager:us-west-2:612319403245:secret:RsvpPassword-mpxIUf
               - arn:aws:secretsmanager:us-west-2:612319403245:secret:RsvpJwtSecret-UwzzIv
+              - arn:aws:secretsmanager:us-west-2:612319403245:secret:RsvpSessionTokenJwtSecret-Qxn9wr              
   Survey:
     Type: AWS::Serverless::Function
     Properties:
@@ -74,6 +81,13 @@ Resources:
               Ref: TheApi
             Path: /survey
             Method: get
+        SubmitSurvey:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: TheApi
+            Path: /survey
+            Method: post
       Policies:
         - Statement:
           - Sid: SecretsManagerReadBothSecrets
@@ -81,6 +95,7 @@ Resources:
             Action:
               - secretsmanager:GetSecretValue
             Resource:
+              - arn:aws:secretsmanager:us-west-2:612319403245:secret:RsvpPassword-mpxIUf              
               - arn:aws:secretsmanager:us-west-2:612319403245:secret:RsvpJwtSecret-UwzzIv
               - arn:aws:secretsmanager:us-west-2:612319403245:secret:RsvpSessionTokenJwtSecret-Qxn9wr
 

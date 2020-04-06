@@ -46,6 +46,12 @@ class SurveyView:
       </head>
       <body>
         <h1>Survey Goes Here</h1>
+          <form action="/survey" class="justify-content-center" method="POST">
+            <div class="form-group">
+              <input type="text" maxlength="20" class="form-control" id="stuff" name="stuff">
+            </div>
+              <input type="submit" class="btn btn-primary" value="Submit">
+          </form>
       </body>
     </html>
     """
