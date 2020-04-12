@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 import logging
 import os
 
+import csrf
 from jwt import (
     JWT,
     jwk_from_dict,
@@ -10,6 +11,7 @@ from jwt import (
 )
 from jwt.jwk import OctetJWK
 from jwt.utils import get_int_from_datetime
+
 
 log = logging.getLogger(__name__)
 log.setLevel(getattr(logging, os.environ.get("LOG_LEVEL", "info").upper()))
@@ -25,7 +27,7 @@ class JwtGenerator:
         self,
         jwt_secret: bytes,
         duration_amount: int,
-        duration_units: str
+        duration_units: str,
     ):
         self._jwt_secret = OctetJWK(jwt_secret)
         self._duration_amount = duration_amount
@@ -36,12 +38,12 @@ class JwtGenerator:
 
         self._duration_units = duration_units
 
-    def build_jwt(self) -> str:
-        utc_now: int = datetime.now(timezone.utc)
+    def build_jwt(self, subject: str) -> str:
+        utc_now: "datetime" = datetime.now(timezone.utc)
         return JWT().encode(
             {
                 'iss': 'https://rsvp.adriandmikejones.com/',
-                'sub': 'guest',
+                'sub': subject,
                 'iat': get_int_from_datetime(utc_now),
                 'exp': get_int_from_datetime(utc_now + timedelta(**{self._duration_units: self._duration_amount})),
             },

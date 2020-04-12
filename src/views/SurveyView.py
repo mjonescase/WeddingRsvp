@@ -1,6 +1,6 @@
 class SurveyView:
     @staticmethod
-    def get_html():
+    def get_html(csrf_token: str) -> str:
         return f"""
     <!doctype html>
     <html lang="en">
@@ -48,6 +48,7 @@ class SurveyView:
         <h1>Survey Goes Here</h1>
           <form action="/survey" class="justify-content-center" method="POST">
             <div class="form-group">
+              <input type="hidden" id="csrf-token" name="csrf-token" value="{csrf_token}">
               <input type="text" maxlength="20" class="form-control" id="stuff" name="stuff">
             </div>
               <input type="submit" class="btn btn-primary" value="Submit">

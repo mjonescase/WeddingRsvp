@@ -1,11 +1,22 @@
+from datetime import datetime
 from typing import Dict, List
 
 
 class Controller:
-    def get(self, query_string: Dict[str, str]) -> dict:
+    def get(
+            self,
+            query_string: Dict[str, str],
+            headers: Dict[str, str],
+            multi_value_headers: Dict[str, List[str]]
+    ) -> dict:
         raise NotImplemented()
 
-    def post(self, form: Dict[str, List[str]], headers: Dict) -> dict:
+    def post(
+            self,
+            form: Dict[str, List[str]],
+            headers: Dict[str, str],
+            multi_value_headers: Dict[str, List[str]]
+    ) -> dict:
         raise NotImplemented()
         
     @classmethod
@@ -34,3 +45,30 @@ class Controller:
                 'Location': location
             }
         }
+
+    def build_session_secret(self, user_agent: str) -> str:
+        return ",".join([
+            datetime.strftime(datetime.now(), "%Y-%m-%dT%H:%M:%S.%f"),
+            user_agent
+        ])
+
+    def build_session_cookie(
+            self,
+            session_token: str,
+            duration: "datetime.timedelta"
+    ) -> str:
+        return ";".join([
+            "session={0}",
+            "Domain={1}",
+            "Path={2}",
+            "Max-Age={3}",
+            "SameSite=Lax",
+            "HttpOnly",
+            "Secure"
+        ]).format(
+            session_token,
+            "rsvp.adriandmikejones.com",
+            "/authenticate",
+            duration.seconds
+        )
+    

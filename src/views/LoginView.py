@@ -1,6 +1,6 @@
 class LoginView:
     @staticmethod
-    def get_html(first_try: bool = True) -> str:
+    def get_html(csrf_token: str, first_try: bool = True) -> str:
         return f"""
     <!doctype html>
     <html lang="en">
@@ -53,8 +53,9 @@ class LoginView:
                   { "" if first_try else '<h3 class="py-2 text-truncate error">Invalid Passcode.</h3>' }
                   <h1 class="display-4 py-2 text-truncate">Passcode:</h1>
                   <div class="px-2">
-                    <form action="/" class="justify-content-center" method="POST">
+                    <form action="/authenticate" class="justify-content-center" method="POST">
                       <div class="form-group">
+                        <input type="hidden" id="csrf-token" name="csrf-token" value="{csrf_token}">
                         <input type="password" maxlength="20" class="form-control" id="passcode" name="passcode">
                       </div>
                         <input type="submit" class="btn btn-primary" value="Submit">
