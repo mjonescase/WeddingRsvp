@@ -1,6 +1,19 @@
+from enum import Enum
+
+class FailureReason(Enum):
+    PASSCODE = "passcode"
+    TIMEOUT = "timeout"
+
 class LoginView:
     @staticmethod
-    def get_html(csrf_token: str, first_try: bool = True) -> str:
+    def get_html(
+            csrf_token: str,
+            failure_reason: FailureReason = None
+    ) -> str:
+        error_message: str = {
+            FailureReason.PASSCODE: '<h3 class="py-2 text-truncate error">Invalid Passcode.</h3>',
+            FailureReason.TIMEOUT: '<h3 class="py-2 text-truncate error">Form timed out. Please try again.</h3>'
+        }.get(failure_reason, "")
         return f"""
     <!doctype html>
     <html lang="en">
@@ -50,7 +63,7 @@ class LoginView:
             <div class="container">
               <div class="row text-white">
                 <div class="col-xl-5 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-4">
-                  { "" if first_try else '<h3 class="py-2 text-truncate error">Invalid Passcode.</h3>' }
+                  { error_message }
                   <h1 class="display-4 py-2 text-truncate">Passcode:</h1>
                   <div class="px-2">
                     <form action="/authenticate" class="justify-content-center" method="POST">

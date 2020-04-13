@@ -54,7 +54,7 @@ class AuthenticateController(Controller):
                 self._jwt_validator.get_sub(jwt)                
         ):
             log.warn("Invalid CSRF token. Redirecting to login")
-            return self.__class__.redirect("/")
+            return self.__class__.redirect("/?failureReason=timeout")
 
         passcode: str = form["passcode"][0]
         log.info("Passcode exists in form. Checking...")
@@ -68,4 +68,4 @@ class AuthenticateController(Controller):
             )
 
         log.warn("Invalid passcode. Responding with login screen with error message")
-        return self.__class__.redirect("/")
+        return self.__class__.redirect("/?failureReason=passcode")
