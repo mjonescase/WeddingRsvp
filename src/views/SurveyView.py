@@ -49,17 +49,22 @@ class SurveyView:
           <div id="cover-caption">
             <div class="container">
               <div class="row text-white">
-                <div class="col-xl-5 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-4">              
-                  <h1 class="display-4 py-2 text-truncate">Mike and Adri Jones Party RSVP</h1>
-                  <p>Please come in your comfortable, casual clothes and join us in celebrating our first year of marriage. The meal will be served at 2:00 pm, and alcoholic beverages will be available after 3:00 pm.
-
-Saturday, September 12th, 1 - 6 pm
-10280 Pearce Mill Rd, Allison Park, PA, 15101</p>
+                <div class="col-xl-8 col-lg-9 col-md-10 col-sm-12 mx-auto text-center form p-4">
+                  <h3>We hope you'll join us in celebrating our first year of marriage<h3>
+                  <p>Please come in your comfortable, casual clothes. The meal will be served at 2:00 pm, and alcoholic beverages will be available after 3:00 pm.</p>
+                  <p>Saturday, September 12th, 1 - 6 pm</p>
+                  <p>10280 Pearce Mill Rd, Allison Park, PA, 15101</p>
                   <div class="px-2">
                     <form action="/submitSurvey" class="justify-content-center" method="POST">
                       <div class="form-group">
                         <input type="hidden" id="csrf-token" name="csrf-token" value="{csrf_token}">
-                        <input type="text" maxlength="20" class="form-control" id="stuff" name="stuff">
+                        <label for="name">Please enter your name:</label>
+                        <input type="text" maxlength="20" class="form-control" id="name" name="name">
+                        <p>Will you be able to attend?</p>
+                        <input type="radio" class="form-control" id="Yes" name="attending">
+                        <label for="Yes">Yes, I will be there.</label>
+                        <input type="radio" class="form-control" id="No" name="attending">
+                        <label for="No">I regret that I am unable to attend.</label>
                       </div>
                       <input type="submit" class="btn btn-primary" value="Submit">
                     </form>

@@ -36,15 +36,19 @@ class AuthenticateController(Controller):
             headers: dict,
             multi_value_headers: dict
     ) -> dict:
-        cookie_map: Dict[str, str] = {}
-        for cookie in multi_value_headers["Cookie"]:
-            name, value = cookie.split("=")
-            cookie_map[name] = value
+        try:
+            cookie_map: Dict[str, str] = {}
+            for cookie in multi_value_headers["Cookie"]:
+                name, value = cookie.split("=")
+                cookie_map[name] = value
+        except KeyError:
+            log.warn("No cookies. Redirecting to login")
+            return self.__class__.redirect("/?failureReason=timeout")
         
         jwt: str = cookie_map["session"]
         if not self._jwt_validator.is_valid_jwt(jwt):
             log.warn("Invalid JWT. Redirecting to login")
-            return self.__class__.redirect("/")
+            return self.__class__.redirect("/?failureReason=timeout")
 
         csrf_token: str = form["csrf-token"][0]
         log.info("CSRF token exists in form. Checking...")
