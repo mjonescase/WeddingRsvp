@@ -4,7 +4,7 @@ import os
 from typing import Dict, List
 
 from .Controller import Controller
-from views.SurveyView import SurveyView
+from views.MultiPageSurveyView import MultiPageSurveyView as SurveyView
 
 log = logging.getLogger(__name__)
 log.setLevel(getattr(logging, os.environ.get("LOG_LEVEL", "info").upper()))
